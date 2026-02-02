@@ -1,12 +1,35 @@
 import {PostCard} from "./PostCard.tsx";
-import type {Post} from "../../models/Post.ts";
+import type {Post} from "@/models/Post.ts";
+import type {UseQueryResult} from "@/types/UseQueryResult.ts";
 
 type PostListProps = {
-    posts: Post[];
+    postsResponse: UseQueryResult<Post[]>;
 }
 
-export function PostList({ posts }: PostListProps) {
-    if (posts.length === 0) return <div className="text-center">Empty</div>;
+export function PostList({ postsResponse }: PostListProps) {
+    const { data: posts, isLoading, error  } = postsResponse;
+
+    if (isLoading) {
+        return (
+            <div className="d-flex justify-content-center align-items-center vh-100">
+                <div className="spinner-border text-primary" role="status">
+                    <span className="visually-hidden">Loading...</span>
+                </div>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="alert alert-danger text-center m-5" role="alert">
+                {error.message}
+            </div>
+        );
+    }
+
+    if (!posts.length) {
+        return <div className="text-center">Empty</div>
+    }
 
     return (
         <div className="posts">
