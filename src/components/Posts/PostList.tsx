@@ -1,5 +1,5 @@
 import {PostCard} from "./PostCard.tsx";
-import type {Post} from "@/models/Post.ts";
+import type {Post} from "@/types/Post.ts";
 import type {UseQueryResult} from "@/types/UseQueryResult.ts";
 
 type PostListProps = {

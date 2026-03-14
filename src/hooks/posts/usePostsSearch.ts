@@ -1,5 +1,5 @@
-import {useState, useEffect, useCallback} from "react";
-import type {Post} from "@/models/Post.ts";
+import {useState, useEffect, useCallback, useRef} from "react";
+import type {Post} from "@/types/Post.ts";
 import {baseUrl} from "@/config/env.ts";
 import {useNavigate} from "react-router-dom";
 
@@ -8,18 +8,25 @@ export type FetchPostsParams = {
     userId?: string;
 };
 
-export const useSearchPosts = ({search, userId}: FetchPostsParams) => {
+export const usePostsSearch = ({search, userId}: FetchPostsParams = {}) => {
     const [data, setData] = useState<Post[]>([]);
     const [allUsersId, setAllUsersId] = useState<number[]>([]);
-    const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
     const [error, setError] = useState<Error | null>(null);
 
     const navigate = useNavigate();
 
+    const fetchPostsAbortControllerRef = useRef<AbortController | null>(null);
+
     useEffect(() => {
+        const controller = new AbortController();
+        const signal = controller.signal;
+
         const fetchAllUsersId = async () => {
+            setIsLoading(true);
+
             try {
-                const res = await fetch(`${baseUrl}/posts`);
+                const res = await fetch(`${baseUrl}/posts`, { signal });
                 if (!res.ok) throw new Error("Something went wrong");
 
                 const data: Post[] = await res.json();
@@ -42,6 +49,7 @@ export const useSearchPosts = ({search, userId}: FetchPostsParams) => {
 
                 setData(filteredPosts);
             } catch (e: unknown) {
+                if (e instanceof Error && e.name === 'AbortError') return;
                 setError(e instanceof Error ? e : new Error("Something went wrong"));
             } finally {
                 setIsLoading(false);
@@ -49,28 +57,28 @@ export const useSearchPosts = ({search, userId}: FetchPostsParams) => {
         };
 
         fetchAllUsersId();
+        return () => controller.abort();
     }, []);
 
     const fetchPosts = useCallback(async ({search, userId}: FetchPostsParams = {}) => {
-        setIsLoading(true);
-        setError(null);
+        if (fetchPostsAbortControllerRef.current) {
+            fetchPostsAbortControllerRef.current.abort();
+        }
+
+        const controller = new AbortController();
+        fetchPostsAbortControllerRef.current = controller;
+        const signal = controller.signal;
 
         try {
+            setIsLoading(true);
+            setError(null);
+
             const params = new URLSearchParams();
 
-            if (userId) {
-                params.set("userId", userId);
-            } else {
-                params.delete("userId");
-            }
+            if (userId) params.set("userId", userId);
+            if (search) params.set("title_like", search);
 
-            if (search) {
-                params.set("title_like", search);
-            } else {
-                params.delete("title_like");
-            }
-
-            const res = await fetch(`${baseUrl}/posts?${params.toString()}`);
+            const res = await fetch(`${baseUrl}/posts?${params.toString()}`, { signal });
             if (!res.ok) throw new Error("Something went wrong");
 
             const data: Post[] = await res.json();
@@ -79,11 +87,13 @@ export const useSearchPosts = ({search, userId}: FetchPostsParams) => {
             const paramsString = params.toString();
             navigate(paramsString ? `?${paramsString}` : '/', {replace: true})
         } catch (e: unknown) {
+            if (e instanceof Error && e.name === 'AbortError') return;
             setError(e instanceof Error ? e : new Error("Something went wrong"));
         } finally {
             setIsLoading(false);
+            fetchPostsAbortControllerRef.current = null;
         }
-    }, []);
+    }, [navigate]);
 
     return {data, allUsersId, isLoading, error, fetchPosts};
 };

@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
-import {useDebounce} from "@/hooks/useDebounce.ts";
-import type {FetchPostsParams} from "@/hooks/useSearchPosts.ts";
+import {useDebounce} from "@/hooks/debounce/useDebounce.ts";
+import type {FetchPostsParams} from "@/hooks/posts/usePostsSearch.ts";
 
 type SearchBarProps = {
     onFetch: (params: FetchPostsParams) => void;
@@ -9,19 +9,11 @@ type SearchBarProps = {
     userIdValue?: string;
 };
 
-export function SearchBar({onFetch, allUsersId, searchValue, userIdValue}: SearchBarProps) {
+export function PostsSearchBar({onFetch, allUsersId, searchValue, userIdValue}: SearchBarProps) {
     const [search, setSearch] = useState<string>(searchValue ?? "");
     const [selectedUserId, setSelectedUserId] = useState<string>(userIdValue ?? "");
 
     const debouncedSearch = useDebounce<string>(search);
-
-    const handleUserIdChange = (value: string) => {
-        setSelectedUserId(value);
-        onFetch({
-            search: debouncedSearch || undefined,
-            userId: value || undefined,
-        });
-    };
 
     useEffect(() => {
         onFetch({
@@ -37,11 +29,11 @@ export function SearchBar({onFetch, allUsersId, searchValue, userIdValue}: Searc
                 <select
                     className="ms-2 h-100"
                     value={selectedUserId}
-                    onChange={({target}) => handleUserIdChange(target.value)}
+                    onChange={({target}) => setSelectedUserId(target.value)}
                 >
                     <option value="">All</option>
                     {allUsersId.map((id) => (
-                        <option key={id} value={id} selected={selectedUserId === id.toString()}>
+                        <option key={id} value={id}>
                             User {id}
                         </option>
                     ))}
