@@ -1,51 +1,40 @@
-import {usePost} from "@/hooks/posts/usePost.ts";
-import {useNavigate, useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router";
+import {Button, Card, Col, Container, Row} from "react-bootstrap";
+import {QueryBoundary} from "@/components/ui/QueryBoundary.tsx";
+import {useGetPostByIdQuery} from "@/store/postsApi";
 
 export const PostDetailsPage = () => {
-    const { id } = useParams();
+    const {id} = useParams();
     const navigate = useNavigate();
-    const { data: post, isLoading, error } = usePost(id);
-
-    if (isLoading) {
-        return (
-            <div className="d-flex justify-content-center align-items-center vh-100">
-                <div className="spinner-border text-primary" role="status">
-                    <span className="visually-hidden">Loading...</span>
-                </div>
-            </div>
-        );
-    }
-
-    if (error) {
-        return (
-            <div className="alert alert-danger text-center m-5" role="alert">
-                {error.message}
-            </div>
-        );
-    }
-
-    if (!post) {
-        return (
-            <div className="alert alert-danger text-center m-5" role="alert">
-                Not Found
-            </div>
-        );
-    }
+    const query = useGetPostByIdQuery(id!);
 
     return (
-        <div className="container py-5">
-            <div className="row justify-content-center">
-                <div className="col-lg-8">
-                    <div className="card shadow-sm">
-                        <div className="card-body">
-                            <h5 className="card-title text-primary">{post.title}</h5>
-                            <h6 className="card-subtitle mb-2 text-muted">Post {post.id} - user {post.userId} </h6>
-                            <p className="card-text mt-4">{post.body}</p>
-                            <button onClick={() => navigate(-1)} className="btn btn-primary mt-auto">Back</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <Container className="py-5">
+            <QueryBoundary {...query}>
+                {(post) => (
+                    <Row className="justify-content-center">
+                        <Col lg={8}>
+                            <Card className="shadow-sm">
+                                <Card.Body className="d-flex flex-column">
+                                    <Card.Title className="text-primary">{post.title}</Card.Title>
+                                    <Card.Subtitle className="mb-2 text-muted">
+                                        Post {post.id} - User {post.userId}
+                                    </Card.Subtitle>
+                                    <Card.Text className="mt-4">{post.body}</Card.Text>
+                                    <Button
+                                        variant="secondary"
+                                        className="mt-auto"
+                                        onClick={() => navigate(-1)}
+                                    >
+                                        Back
+                                    </Button>
+                                </Card.Body>
+                            </Card>
+                        </Col>
+                    </Row>
+                )}
+            </QueryBoundary>
+        </Container>
+
     )
 }

@@ -1,50 +1,49 @@
 import {useEffect, useState} from "react";
-import {useDebounce} from "@/hooks/debounce/useDebounce.ts";
-import type {FetchPostsParams} from "@/hooks/posts/usePostsSearch.ts";
+import {useDebounce} from "@/hooks/useDebounce.ts";
+import Form from "react-bootstrap/esm/Form";
+import {Col, Row} from "react-bootstrap";
+import {Select, type SelectOption} from "@/components/ui/Form/Select.tsx";
+import {Input} from "@/components/ui/Form/Input.tsx";
 
-type SearchBarProps = {
-    onFetch: (params: FetchPostsParams) => void;
-    allUsersId: number[];
-    searchValue?: string;
-    userIdValue?: string;
-};
+type PostsSearchBarProps = {
+    allUsersId: SelectOption[];
+    onSearchChange: (search: string) => void;
+    onUserIdChange: (id: string) => void;
+}
 
-export function PostsSearchBar({onFetch, allUsersId, searchValue, userIdValue}: SearchBarProps) {
-    const [search, setSearch] = useState<string>(searchValue ?? "");
-    const [selectedUserId, setSelectedUserId] = useState<string>(userIdValue ?? "");
-
+export function PostsSearchBar({ onSearchChange, onUserIdChange, allUsersId }: PostsSearchBarProps) {
+    const [search, setSearch] = useState("");
+    const [selectedUserId, setSelectedUserId] = useState("");
     const debouncedSearch = useDebounce<string>(search);
 
     useEffect(() => {
-        onFetch({
-            search: debouncedSearch || undefined,
-            userId: selectedUserId || undefined,
-        });
-    }, [debouncedSearch, onFetch, selectedUserId]);
+        onSearchChange(debouncedSearch);
+    }, [debouncedSearch]);
 
     return (
-        <div className="search-bar d-flex gap-3">
-            <div className="d-flex align-items-center">
-                Filter by user:
-                <select
-                    className="ms-2 h-100"
-                    value={selectedUserId}
-                    onChange={({target}) => setSelectedUserId(target.value)}
-                >
-                    <option value="">All</option>
-                    {allUsersId.map((id) => (
-                        <option key={id} value={id}>
-                            User {id}
-                        </option>
-                    ))}
-                </select>
-            </div>
-            <input
-                type="text"
-                placeholder="Search posts..."
-                value={search}
-                onChange={({target}) => setSearch(target.value)}
-            />
-        </div>
+        <Form>
+            <Row className="g-3 align-items-center">
+                <Col xs="auto">
+                    <Select
+                        group={{ label: "Filter by user" }}
+                        options={allUsersId}
+                        value={selectedUserId}
+                        onChange={(e) => {
+                            setSelectedUserId(e.target.value);
+                            onUserIdChange(e.target.value);
+                        }}
+                    />
+                </Col>
+                <Col>
+                    <Input
+                        group={{ label: "Search posts" }}
+                        type="text"
+                        placeholder="Title post..."
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                    />
+                </Col>
+            </Row>
+        </Form>
     );
 }
