@@ -1,4 +1,5 @@
-import {Form, type FormCheckProps, type FormControlProps, FormGroup, type FormSelectProps} from "react-bootstrap";
+import {Form, type FormCheckProps, type FormControlProps, type FormSelectProps} from "react-bootstrap";
+import {FormGroup} from "@components/ui/Form/FormGroup.tsx";
 
 export type FormGroupProps = {
     className?: string;
