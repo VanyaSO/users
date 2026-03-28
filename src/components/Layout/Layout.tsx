@@ -1,7 +1,7 @@
 import { Container } from "react-bootstrap";
-import { Header } from "@/components/Layout/Header.tsx";
-import { Footer } from "@/components/Layout/Footer.tsx";
-import { Outlet } from "react-router";
+import { Header } from "@components/Layout/Header.tsx";
+import { Footer } from "@components/Layout/Footer.tsx";
+import {Outlet} from "react-router";
 
 export const Layout = () => {
     return (

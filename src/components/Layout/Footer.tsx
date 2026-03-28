@@ -13,11 +13,6 @@ export const Footer = () => {
                         </p>
                     </Col>
                 </Row>
-                <Row>
-                    <Col>
-                        <a href="#">Back to top</a>
-                    </Col>
-                </Row>
             </Container>
         </footer>
     );

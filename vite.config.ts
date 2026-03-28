@@ -12,8 +12,10 @@ export default defineConfig({
       '@hooks': path.resolve(__dirname, './src/hooks'),
       '@pages': path.resolve(__dirname, './src/pages'),
       '@routes': path.resolve(__dirname, './src/routes'),
-      '@types': path.resolve(__dirname, './src/types'),
-      '@store': path.resolve(__dirname, './src/store')
+      '@t': path.resolve(__dirname, './src/types'),
+      '@store': path.resolve(__dirname, './src/store'),
+      '@contexts': path.resolve(__dirname, './src/contexts'),
+      '@utils': path.resolve(__dirname, './src/utils'),
     },
   },
 })

@@ -1,26 +1,53 @@
-import {Spinner} from "@/components/ui/Spinner.tsx";
+import {Spinner} from "@components/ui/Spinner.tsx";
 import {Alert} from "react-bootstrap";
 import type {FetchBaseQueryError} from "@reduxjs/toolkit/query";
 import type {SerializedError} from "@reduxjs/toolkit";
+import type {ComponentType, ReactNode} from "react";
 
-type QueryBoundaryProps<T> = {
-    isLoading: boolean;
-    isUninitialized?: boolean;
-    error?: FetchBaseQueryError | SerializedError | undefined;
+export type QueryBoundaryProps<T> = {
+    isFetching: boolean;
+    isUninitialized: boolean;
+    error?: FetchBaseQueryError | SerializedError;
     data?: T | undefined | null;
-    children: (data: T) => React.ReactNode;
+    children: ReactNode;
+
+    loadingElement?: ReactNode;
+    errorElement?: ComponentType<{ message: string }>;
+    notFoundElement?: ReactNode;
+    emptyElement?: ReactNode;
+
+    isEmpty?: (data: T) => boolean;
 }
 
-export const QueryBoundary = <T,>({isLoading, isUninitialized, error, data, children}: QueryBoundaryProps<T>) => {
-    if (isUninitialized) return <>{children(data as T)}</>;
+export const QueryBoundary = <T, >({
+   isFetching,
+   isUninitialized,
+   error,
+   data,
+   children,
+   loadingElement,
+   errorElement: ErrorElement,
+   notFoundElement,
+   emptyElement,
+   isEmpty,
+}: QueryBoundaryProps<T>) => {
+    if (isFetching) return loadingElement ?? <Spinner/>
 
-    if (isLoading) return <Spinner />
+    if (error) {
+        let errorMessage = 'Something went wrong';
 
-    if (error) return <Alert variant="danger">Error</Alert>
+        if ('status' in error) {
+            errorMessage = `Status: ${error.status}. Error: ${'error' in error ? error.error : JSON.stringify(error.data)}`;
+        } else if ('message' in error && error.message) {
+            errorMessage = error.message;
+        }
 
-    if (!data) return <Alert variant="warning">Not Found</Alert>
+        return ErrorElement ? <ErrorElement message={errorMessage}/> : <Alert variant="danger" className="text-center">{errorMessage}</Alert>
+    }
 
-    if (Array.isArray(data) && !data.length) return <Alert variant="primary">Empty</Alert>
+    if (!data && !isUninitialized) return notFoundElement ?? <Alert variant="warning" className="text-center">Not Found</Alert>
 
-    return <>{children(data! as T)}</>;
+    if (data && isEmpty?.(data) || Array.isArray(data) && !data.length) return emptyElement ?? <Alert variant="dark" className="text-center">Empty</Alert>
+
+    return <>{children}</>;
 }

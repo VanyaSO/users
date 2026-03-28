@@ -1,57 +1,73 @@
 import {Button, Col, Container, Row} from "react-bootstrap";
-import {Typography} from "@/components/ui/Typography.tsx";
-import {PostEditorForm} from "@/components/Posts/PostEditorForm/PostEditorForm.tsx";
+import {Typography} from "@components/ui/Typography.tsx";
+import {PostEditorForm} from "@components/Posts/PostEditorForm/PostEditorForm.tsx";
 import {useNavigate, useParams} from "react-router";
-import {QueryBoundary} from "@/components/ui/QueryBoundary.tsx";
-import {useCreatePostMutation, useGetPostByIdQuery, useUpdatePostMutation} from "@/store/postsApi";
-import type {PostCreatePayload, PostUpdatePayload} from "@/store/postsApi/types.ts";
+import {QueryBoundary} from "@components/ui/QueryBoundary.tsx";
+import {useCreatePostMutation, useGetPostByIdQuery, useUpdatePostMutation} from "@store/api/postsApi.ts";
+import routerConfig from "@routes/routerConfig.ts";
+import {useRef} from "react";
+import {useToast} from "@hooks/useToast.ts";
+import type {PostCreatePayload, PostUpdatePayload} from "@t/Post.ts";
 
 export const PostEditorPage = () => {
     const {id} = useParams();
     const navigate = useNavigate();
-    const query = useGetPostByIdQuery(id!, {skip: !id});
 
+    const query = useGetPostByIdQuery(id!, {skip: !id});
     const [createPost, {isLoading: isCreating}] = useCreatePostMutation();
     const [updatePost, {isLoading: isUpdating}] = useUpdatePostMutation();
 
+    const showToast = useToast();
+
+    const abortRef = useRef<ReturnType<typeof createPost> | ReturnType<typeof updatePost> | null>(null);
+
     const isEdit = !!id;
 
-    const handleSubmit = (payload: PostUpdatePayload | PostCreatePayload) => {
-        if (isEdit) {
-            updatePost({
-                id: id!,
-                ...payload
-            });
-        } else {
-            createPost(payload);
+    const handleSubmit = async (payload: PostUpdatePayload | PostCreatePayload) => {
+        const request = isEdit ? updatePost({id: id!, ...payload}) : createPost(payload);
+
+        abortRef.current = request;
+
+        try {
+            await request.unwrap();
+            showToast(`Successfully created!`);
+            navigate(routerConfig.postsPagePath)
+        } catch (err: unknown) {
+            const message = err instanceof Error ? err.message : "Something went wrong";
+            showToast(`Error: ${message}`, "danger");
         }
+    }
+
+    const handleBack = () => {
+        abortRef.current?.abort();
+        navigate(-1)
     }
 
     return (
         <Container className="py-5">
             <QueryBoundary {...query}>
-                {(post) => {
-                    const editorText = isEdit ? "Edit" : "Create";
-
-                    return (
-                        <Row>
-                            <Col sm={4} className="mx-auto">
-                                <Typography variant="h2" className="text-center mb-4">{editorText} post</Typography>
-                                <PostEditorForm post={post}
-                                                onSubmit={handleSubmit}
-                                                isLoading={isCreating || isUpdating}
-                                />
-                                <Button
-                                    variant="secondary"
-                                    className="w-100 mt-3"
-                                    onClick={() => navigate(-1)}
-                                >
-                                    Back
-                                </Button>
-                            </Col>
-                        </Row>
-                    )
-                }}
+                <Row>
+                    <Col sm={4} className="mx-auto">
+                        <Typography
+                            variant="h2"
+                            className="text-center mb-4"
+                        >
+                            {isEdit ? "Edit" : "Create"} post
+                        </Typography>
+                        <PostEditorForm
+                            post={query.data}
+                            onSubmit={handleSubmit}
+                            isLoading={isUpdating || isCreating}
+                        />
+                        <Button
+                            variant="secondary"
+                            className="w-100 mt-3"
+                            onClick={handleBack}
+                        >
+                            Back
+                        </Button>
+                    </Col>
+                </Row>
             </QueryBoundary>
         </Container>
     )
