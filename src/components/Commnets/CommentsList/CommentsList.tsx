@@ -1,5 +1,5 @@
-import type {Comment as CommentType} from "@t/Comment.ts";
-import {CommentItem} from "./CommentItem.tsx";
+import type {Comment as CommentType} from "@t/comment.ts";
+import {CommentItem} from "../CommentItem";
 
 type CommentListProps = {
     className?: string;

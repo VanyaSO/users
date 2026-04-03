@@ -6,3 +6,6 @@ export const VariantSchema = z.enum([
 ]);
 
 export type Variant = z.infer<typeof VariantSchema>;
+
+export type OmitVariant<T> = Omit<T, "variant">;
+export type OmitChildren<T> = Omit<T, 'children'>;

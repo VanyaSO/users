@@ -1,15 +1,15 @@
 import {Link, useSearchParams} from "react-router";
 import {Container, Row, Col, Button} from "react-bootstrap";
-import {PostsSearchBar} from "@components/Posts/PostsSearchBar.tsx";
+import {PostsSearchBar} from "@components/Posts/PostsSearchBar";
 import routerConfig from "@routes/routerConfig.ts";
 import {useCallback} from "react";
-import type {PostsSearchParams} from "@t/Post.ts";
-import {Pagination} from "@components/ui/Pagination.tsx";
+import type {Post, PostsSearchParams} from "@t/post.ts";
+import {Pagination} from "@components/ui/Pagination";
 import {usePagination} from "@hooks/usePagination.ts";
 import {useGetUsersQuery} from "@store/api/usersApi.ts";
 import {useGetPostsQuery} from "@store/api/postsApi.ts";
-import {QueryBoundary} from "@components/ui/QueryBoundary.tsx";
-import {PostList} from "@components/Posts/PostList.tsx";
+import {QueryBoundary} from "@components/ui/QueryBoundary";
+import {PostList} from "@components/Posts/PostList";
 
 export const PostsPage = () => {
     const [searchParams, setSearchParams] = useSearchParams();
@@ -26,15 +26,17 @@ export const PostsPage = () => {
     });
 
     const totalPages = Math.ceil((postsQuery.data?.totalCount || 0) / 12);
+    const posts = postsQuery.data?.posts ?? [];
+    const isPostsEmpty = ({posts}: { posts: Post[] }) => posts.length === 0;
 
-    const { data: users } = useGetUsersQuery();
+    const {data: users} = useGetUsersQuery();
     const allUsersId = users ? Array.from(users.map((user) => user.id)).sort((a, b) => a - b) : [];
     const usersIdOptions = [{value: "", label: "All"}, ...allUsersId.map(id => ({value: id, label: `User ${id}`}))];
 
     const updateParams = useCallback((newParams: Partial<PostsSearchParams>) => {
         const newSearchParams = new URLSearchParams(searchParams);
 
-        if ("search" in newParams) {
+        if (newSearchParams.has("search")) {
             if (newParams.search) {
                 newSearchParams.set("title_like", newParams.search)
             } else {
@@ -42,7 +44,7 @@ export const PostsPage = () => {
             }
         }
 
-        if ("userId" in newParams) {
+        if (newSearchParams.has("userId")) {
             if (newParams.userId) {
                 newSearchParams.set("userId", String(newParams.userId))
             } else {
@@ -84,9 +86,9 @@ export const PostsPage = () => {
             </Row>
             <QueryBoundary
                 {...postsQuery}
-                isEmpty={({ posts }) => posts.length === 0}
+                isEmpty={isPostsEmpty}
             >
-                <PostList posts={postsQuery.data?.posts ?? []} />
+                <PostList posts={posts}/>
                 <Row>
                     <Col className="mt-5">
                         <Pagination

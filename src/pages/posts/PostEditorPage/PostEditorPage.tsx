@@ -1,13 +1,13 @@
 import {Button, Col, Container, Row} from "react-bootstrap";
-import {Typography} from "@components/ui/Typography.tsx";
-import {PostEditorForm} from "@components/Posts/PostEditorForm/PostEditorForm.tsx";
+import {Typography} from "@components/ui/Typography";
+import {PostEditorForm} from "@components/Posts/PostEditorForm";
 import {useNavigate, useParams} from "react-router";
-import {QueryBoundary} from "@components/ui/QueryBoundary.tsx";
+import {QueryBoundary} from "@components/ui/QueryBoundary";
 import {useCreatePostMutation, useGetPostByIdQuery, useUpdatePostMutation} from "@store/api/postsApi.ts";
 import routerConfig from "@routes/routerConfig.ts";
 import {useRef} from "react";
 import {useToast} from "@hooks/useToast.ts";
-import type {PostCreatePayload, PostUpdatePayload} from "@t/Post.ts";
+import type {PostCreatePayload, PostUpdatePayload} from "@t/post.ts";
 
 export const PostEditorPage = () => {
     const {id} = useParams();

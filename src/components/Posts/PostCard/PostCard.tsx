@@ -1,7 +1,7 @@
-import type {Post} from "@t/Post.ts";
+import type {Post} from "@t/post.ts";
 import {Link} from "react-router";
 import {Button, Card} from "react-bootstrap";
-import {getPostDetailsPath, getPostUpdatePath} from "@routes/routerConfig.ts";
+import {getPostDetailsPath, getPostUpdatePath} from "@routes/routerConfig";
 
 type PostCardProps = {
     post: Post

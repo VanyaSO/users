@@ -1,9 +1,9 @@
 import {useNavigate, useParams} from "react-router";
 import {Button, Card, Col, Container, Row} from "react-bootstrap";
-import {QueryBoundary} from "@components/ui/QueryBoundary.tsx";
+import {QueryBoundary} from "@components/ui/QueryBoundary";
 import {useGetPostByIdQuery} from "@store/api/postsApi.ts";
-import {Typography} from "@components/ui/Typography.tsx";
-import {CommentsList} from "@components/Commnets/CommentsList.tsx";
+import {Typography} from "@components/ui/Typography";
+import {CommentsList} from "@components/Commnets/CommentsList";
 import {useGetCommentsByPostIdQuery} from "@store/api/commentsApi.ts";
 
 export const PostDetailsPage = () => {

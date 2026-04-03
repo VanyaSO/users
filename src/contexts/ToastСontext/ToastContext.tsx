@@ -1,5 +1,5 @@
 import { createContext } from "react";
-import type {Variant} from "@t/Bootstrap.ts";
+import type {Variant} from "@t/shared.ts";
 
 type ToastContextType = {
     (message: string, type?: Variant): void

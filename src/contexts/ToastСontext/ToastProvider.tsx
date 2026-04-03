@@ -1,9 +1,9 @@
 import {type ReactNode, useState} from "react";
-import type {ToastState} from "@t/Toast.ts";
+import type {ToastState} from "@t/toast.ts";
 import { ToastContext } from "./ToastContext";
 import {Toast, ToastContainer} from "react-bootstrap";
 import {capitalize} from "@utils/capitalize.ts";
-import type {Variant} from "@t/Bootstrap.ts";
+import type {Variant} from "@t/shared.ts";
 
 type ToastProviderProps = {
     children: ReactNode;

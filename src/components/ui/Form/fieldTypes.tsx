@@ -1,51 +1,24 @@
-import {Form, type FormCheckProps, type FormControlProps, type FormSelectProps} from "react-bootstrap";
-import {FormGroup} from "@components/ui/Form/FormGroup.tsx";
-
-export type FormGroupProps = {
-    className?: string;
-    label?: string;
-    isTouched?: boolean;
-    errors?: string;
-    controlId: string;
-}
-
-export type InputFieldProps = {
-    variant: "input",
-    group: FormGroupProps,
-} & FormControlProps;
-
-export type TextareaFieldProps = {
-    variant: "textarea",
-    group: FormGroupProps,
-    rows?: number
-} & FormControlProps;
-
-export type SelectOption = { value: string | number, label: string };
-export type SelectFieldProps = {
-    variant: "select",
-    group: FormGroupProps,
-    options: SelectOption[]
-} & FormSelectProps;
-
-export type CheckboxFieldProps = {
-    variant: "checkbox"
-} & FormCheckProps;
-
-export type RadioFieldProps = {
-    variant: "radio"
-} & FormCheckProps;
-
-type OmitVariant<T> = Omit<T, "variant">;
+import {FormGroup} from "@components/ui/Form/FormGroup/FormGroup.tsx";
+import type {
+    CheckboxFieldProps,
+    InputFieldProps,
+    RadioFieldProps,
+    SelectFieldProps,
+    SelectOption,
+    TextareaFieldProps
+} from "@t/field.ts";
+import { Form } from "react-bootstrap";
+import type {OmitVariant} from "@t/shared.ts";
 
 export const fieldTypes = {
     input: ({group, ...rest}: OmitVariant<InputFieldProps>) => (
         <FormGroup {...group}>
-            <Form.Control type="text" {...rest}  />
+            <Form.Control type="text" aria-label={rest.name} {...rest}  />
         </FormGroup>
     ),
     textarea: ({group, ...rest}: OmitVariant<TextareaFieldProps>) => (
         <FormGroup {...group}>
-            <Form.Control as="textarea" {...rest}  />
+            <Form.Control as="textarea" aria-label={rest.name} {...rest}  />
         </FormGroup>
     ),
     select: ({group, options, ...props}: OmitVariant<SelectFieldProps>) => (
@@ -58,5 +31,9 @@ export const fieldTypes = {
         </FormGroup>
     ),
     checkbox: (props: OmitVariant<CheckboxFieldProps>) => <Form.Check type="checkbox" {...props} />,
-    radio: (props: OmitVariant<RadioFieldProps>) => <Form.Check type="radio" {...props} />
+    radio: ({group, values, ...props}: OmitVariant<RadioFieldProps>) => (
+        <FormGroup {...group}>
+            {values.map(() => <Form.Check type="radio" {...props} />)}
+        </FormGroup>
+    )
 }

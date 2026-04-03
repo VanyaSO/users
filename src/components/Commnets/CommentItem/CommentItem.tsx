@@ -1,5 +1,5 @@
 import {Card} from "react-bootstrap";
-import type {Comment as CommentType} from "@t/Comment.ts";
+import type {Comment as CommentType} from "@t/comment.ts";
 
 type CommentProps = {
     comment: CommentType;

@@ -1,12 +1,12 @@
-import {
-    fieldTypes,
-    type InputFieldProps,
-    type TextareaFieldProps,
-    type SelectFieldProps,
-    type CheckboxFieldProps,
-    type RadioFieldProps,
-} from "@components/ui/Form/fieldTypes";
+import {fieldTypes} from "@components/ui/Form/fieldTypes.tsx";
 import type {ReactElement} from "react";
+import type {
+    CheckboxFieldProps,
+    InputFieldProps,
+    RadioFieldProps,
+    SelectFieldProps,
+    TextareaFieldProps
+} from "@t/field.ts";
 
 type FieldProps = InputFieldProps | TextareaFieldProps | SelectFieldProps | CheckboxFieldProps | RadioFieldProps;
 

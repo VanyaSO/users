@@ -1,5 +1,5 @@
 import {z} from "zod";
-import {VariantSchema} from "@t/Bootstrap.ts";
+import {VariantSchema} from "@t/shared.ts";
 
 export const ToastStateSchema = z.object({
     show: z.boolean(),

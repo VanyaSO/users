@@ -1,6 +1,6 @@
-import {PostsPage} from "@pages/posts/PostsPage.tsx";
-import {PostDetailsPage} from "@pages/posts/PostDetailsPage.tsx";
-import {PostEditorPage} from "@pages/posts/PostEditorPage.tsx";
+import {PostsPage} from "@pages/posts/PostsPage/PostsPage.tsx";
+import {PostDetailsPage} from "@pages/posts/PostDetailsPage/PostDetailsPage.tsx";
+import {PostEditorPage} from "@pages/posts/PostEditorPage/PostEditorPage.tsx";
 import routerConfig from "@routes/routerConfig.ts";
 
 export const pagesConfig = Object.freeze({

@@ -1,8 +1,8 @@
 import {createApi} from "@reduxjs/toolkit/query/react";
-import {type User, UserSchema} from "@t/User.ts";
 import {zodParse} from "@utils/zodParse.ts";
 import {z} from "zod";
 import {baseQuery} from "@store/api/api.ts";
+import {type User, UserSchema} from "@t/user.ts";
 
 export const usersApi = createApi({
     reducerPath: 'usersApi',

@@ -1,6 +1,6 @@
-import type {Post} from "@t/Post.ts";
+import type {Post} from "@t/post.ts";
 import {Col, Row} from "react-bootstrap";
-import {PostCard} from "@components/Posts/PostCard.tsx";
+import {PostCard} from "@components/Posts/PostCard";
 import cn from "classnames";
 
 type PostListProps = {

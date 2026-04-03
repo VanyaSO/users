@@ -1,0 +1,1 @@
+export {PostsSearchBar} from "./PostsSearchBar";

@@ -2,9 +2,9 @@ import {useEffect, useState} from "react";
 import {useDebounce} from "@hooks/useDebounce.ts";
 import Form from "react-bootstrap/esm/Form";
 import {Col, Row} from "react-bootstrap";
-import type {PostsSearchParams} from "@t/Post.ts";
-import {Field} from "@components/ui/Form/Field.tsx";
-import type {SelectOption} from "@components/ui/Form/fieldTypes";
+import type {PostsSearchParams} from "@t/post.ts";
+import {Field} from "@components/ui/Form/Field";
+import type {SelectOption} from "@t/field.ts";
 
 type PostsSearchBarProps = {
     allUsersId: SelectOption[];

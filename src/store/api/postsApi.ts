@@ -6,7 +6,7 @@ import {
     type PostCreatePayload,
     PostSchema,
     type PostUpdatePayload
-} from "@t/Post";
+} from "@t/post.ts";
 import {z} from "zod";
 import {zodParse} from "@utils/zodParse.ts";
 import {baseQuery} from "@store/api/api.ts";

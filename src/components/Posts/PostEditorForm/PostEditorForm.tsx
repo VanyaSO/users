@@ -1,9 +1,9 @@
 import {Button, Form, Spinner} from "react-bootstrap"
 import {useFormik} from "formik";
 import {validationSchema} from "./validationSchema.ts";
-import type {Post, PostCreatePayload, PostUpdatePayload} from "@t/Post.ts";
-import {Typography} from "@components/ui/Typography.tsx";
-import {Field} from "@components/ui/Form/Field.tsx";
+import type {Post, PostCreatePayload, PostUpdatePayload} from "@t/post.ts";
+import {Typography} from "@components/ui/Typography";
+import {Field} from "@components/ui/Form/Field";
 
 type PostEditorFormProps = {
     post?: Post;
